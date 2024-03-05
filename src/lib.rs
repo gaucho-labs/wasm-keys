@@ -1,13 +1,29 @@
-mod core;
 mod hotkey;
 mod keyboard_event;
-pub use core::*;
+mod translate;
 pub use keyboard_event::*;
+pub use std::fmt;
+pub use translate::*;
 
 use phf::{phf_map, Map};
 
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub enum ParseError {
+    UnidentifiedKey(String),
+}
+
+impl fmt::Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseError::UnidentifiedKey(s) => write!(f, "Unidentified key: {}", s),
+        }
+    }
+}
+
+impl std::error::Error for ParseError {}
+
 // https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Key {
     // char values
     CharValue(char),
@@ -123,7 +139,7 @@ pub enum Key {
     Zenkaku,
     ZenkakuHanaku,
 
-    Unidentified,
+    Unidentified(String),
 }
 
 pub static KEY_MAP: Map<&'static str, Key> = phf_map! {
@@ -231,6 +247,4 @@ pub static KEY_MAP: Map<&'static str, Key> = phf_map! {
     "romaji" => Key::Romaji,
     "zenkaku" => Key::Zenkaku,
     "zenkakuhanaku" => Key::ZenkakuHanaku,
-
-    "unidentified" => Key::Unidentified,
 };
