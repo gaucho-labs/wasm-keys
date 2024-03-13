@@ -1,6 +1,6 @@
-mod hotkey;
-mod keyboard_event;
-mod translate;
+pub mod hotkey;
+pub mod keyboard_event;
+pub mod translate;
 pub use keyboard_event::*;
 pub use std::fmt;
 pub use translate::*;
